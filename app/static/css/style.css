@@ -1,0 +1,6 @@
+.white-mandala-bg {
+  background-image: url('/static/images/white-mandala.jpg');
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 720px;
+}

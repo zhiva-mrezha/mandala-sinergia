@@ -1,0 +1,139 @@
+- name: install needed software
+  become: yes
+  apt:
+    name:
+      - acl # for running Ansible tasks as non-privileged user
+      - git
+      - virtualenv
+      - gcc
+      - python3-dev
+      - gettext
+      - postgresql
+      - libpq-dev
+      - python-psycopg2
+
+  tags:
+    packages
+
+- name: create databases
+  become: yes
+  become_user: postgres
+  postgresql_db: name={{item}}
+  with_items:
+    - '{{test_db_name}}'
+    - '{{db_name}}'
+
+- name: make database user have access to the database
+  become: yes
+  become_user: postgres
+  postgresql_user: db={{item}} name={{db_user}} password={{db_password}} priv=ALL
+  with_items:
+    - '{{db_name}}'
+    - '{{test_db_name}}'
+
+- name: направи config папката
+  become: yes
+  file:
+    path: '{{ config }}'
+    state: directory
+    owner: '{{ admin }}'
+    group: www-data
+    mode: u=rwx,g=rx,o=r
+    recurse: yes
+
+- name: направи root папката
+  become: yes
+  file:
+    path: '{{ root}}'
+    state: directory
+    owner: '{{ admin }}'
+    group: www-data
+    mode: u=rwx,g=rx,o=r
+    recurse: yes
+
+- name: сложи ключ за достъп до хранилището
+  become: yes
+  become_user: '{{ admin }}'
+  copy:
+    src: files/id_rsa_repo
+    dest: "{{repo_key_file}}"
+    mode: 0600
+
+- name: изтегли най-новия код
+  become: yes
+  git:
+    repo: "{{ repo_url }}"
+    dest: '{{ root }}'
+    version: "{{ repo_version }}"
+    key_file: "{{ repo_key_file }}"
+    accept_hostkey: yes
+    force: yes
+  register: code
+  tags: push
+
+- name: fix permissions
+  become: yes
+  file:
+    path: '{{ root }}'
+    state: directory
+    owner: '{{ admin }}'
+    group: www-data
+    mode: u=rwx,g=rwx,o=r
+    recurse: yes
+
+- name: fix git permissions
+  become: yes
+  file:
+    path: '{{ root }}/.git'
+    state: directory
+    owner: '{{ admin }}'
+    group: '{{ admin }}'
+    recurse: yes
+
+- name: generate manage.sh
+  become: yes
+  template:
+    src: 'files/manage.sh'
+    dest: '{{root}}/manage.sh'
+    owner: '{{ admin }}'
+    group: www-data
+
+- name: install python dependencies
+  become: yes
+  pip:
+    requirements: '{{root}}/requirements.txt'
+    virtualenv: '{{root}}/venv'
+    virtualenv_python: python3
+  tags: install
+
+- name: apply migrations to database
+  shell: '{{root}}/manage.sh migrate'
+  args:
+    chdir: '{{root}}'
+  tags:
+    migrate
+
+- name: make translations
+  shell: '{{root}}/manage.sh compilemessages -l bg'
+  args:
+    chdir: '{{root}}'
+  tags: translate
+
+- name: arrange static files
+  shell: '{{root}}/manage.sh collectstatic --noinput'
+  args:
+    chdir: '{{root}}'
+  tags: static
+
+- name: restart
+  become: yes
+  file: 
+    path: /etc/uwsgi-emperor/vassals/mandala-sinergia.ini
+    state: touch
+  tags: restart
+
+- name: schedule hourly backups
+  cron:
+    name: 'Hourly backups'
+    special_time: hourly
+    job: '{{ root }}/backup.sh'

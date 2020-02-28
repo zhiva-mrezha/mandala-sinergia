@@ -1,0 +1,15 @@
+- name: Restart nftables service
+  become: yes
+  systemd:
+    daemon_reload: yes
+    state: restarted
+    name: nftables
+    enabled: yes 
+
+- name: restart keycloak
+  become: yes
+  systemd:
+    daemon_reload: yes
+    state: restarted
+    name: keycloak
+    enabled: yes 
