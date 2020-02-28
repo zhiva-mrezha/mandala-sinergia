@@ -128,12 +128,12 @@
 - name: restart
   become: yes
   file: 
-    path: /etc/uwsgi-emperor/vassals/mandala-sinergia.ini
+    path: /etc/uwsgi-emperor/vassals/mandala.ini
     state: touch
   tags: restart
 
-- name: schedule hourly backups
-  cron:
-    name: 'Hourly backups'
-    special_time: hourly
-    job: '{{ root }}/backup.sh'
+  #- name: schedule hourly backups
+  #  cron:
+  #    name: 'Hourly backups'
+  #    special_time: hourly
+  #    job: '{{ root }}/backup.sh'

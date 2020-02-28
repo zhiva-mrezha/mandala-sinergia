@@ -1,0 +1,78 @@
+---
+
+uwsgi_default_os_packages:
+  pkg:
+    apt:
+      - uwsgi-emperor
+      - uwsgi-plugin-python
+    dnf: []  # No uWSGI packages available on EL 8 :-(.
+    yum:
+      - uwsgi
+      - uwsgi-plugin-python2
+  pip:
+    apt:
+      - build-essential
+      - libcap-dev
+    dnf:
+      - "@Development Tools"
+      - libcap-devel
+      - which
+    yum:
+      - "@Development Tools"
+      - libcap-devel
+      - which
+
+uwsgi_default_pip_packages:
+  - uwsgi
+
+uwsgi_default_upstart_packages:
+  apt:
+    - upstart
+  dnf:
+    - upstart
+    - which
+  yum:
+    - upstart
+    - which
+
+uwsgi_default_user_group:
+  apt:
+    name: www-data
+    group: www-data
+    home: /var/www
+    shell: /usr/sbin/nologin
+    system: true
+  dnf:
+    name: uwsgi
+    comment: "uWSGI daemon user"
+    group: uwsgi
+    home: /var/run/uwsgi
+    shell: /sbin/nologin
+    system: true
+  yum:
+    name: uwsgi
+    comment: "uWSGI daemon user"
+    group: uwsgi
+    home: /var/run/uwsgi
+    shell: /sbin/nologin
+    system: true
+
+uwsgi_default_conf_templates:
+  apt: emperor.ini.j2
+  dnf: uwsgi.ini.j2
+  yum: uwsgi.ini.j2
+
+uwsgi_default_conf_paths:
+  apt: /etc/uwsgi-emperor/emperor.ini
+  dnf: /etc/uwsgi.ini
+  yum: /etc/uwsgi.ini
+
+uwsgi_default_vassal_paths:
+  apt: /etc/uwsgi-emperor/vassals
+  dnf: /etc/uwsgi.d
+  yum: /etc/uwsgi.d
+
+uwsgi_default_service_names:
+  apt: uwsgi-emperor
+  dnf: uwsgi
+  yum: uwsgi

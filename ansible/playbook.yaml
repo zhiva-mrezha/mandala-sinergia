@@ -2,3 +2,31 @@
   roles:
     - role: mandala-sinergia
       tags: mandala-sinergia
+    
+      # keep in sync with ansible/roles/mandala-sinergia/files/manage.sh
+    - role: cchurch.uwsgi
+      become: yes
+      vars:
+        uwsgi_install: pkg
+        uwsgi_os_packages: [uwsgi, uwsgi-emperor, uwsgi-plugin-python3]
+        uwsgi_vassals:
+          - name: mandala
+            plugin: python3
+            chdir: '{{root}}'
+            module: mandala.wsgi
+            home: '{{root}}/venv'
+            env: |
+              DB_HOST=localhost
+              env = SECRET_KEY={{secret_key}}
+              env = DB_HOST=localhost
+              env = DB_PASSWORD={{db_password}}
+              env = DB_NAME={{db_name}}
+              env = DB_USER={{db_user}}
+              env = OIDC_RP_CLIENT_ID={{oidc_client_id}}
+              env = OIDC_RP_CLIENT_SECRET={{oidc_client_secret}}
+            processes: 4
+            socket: 127.0.0.1:8000
+            uid: '{{ admin }}'
+            gid: www-data
+      tags: uwsgi
+
