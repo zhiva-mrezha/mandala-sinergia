@@ -3,14 +3,14 @@ ansible_user: '{{ admin }}'
 root: /opt/mandala-sinergia
 db_name: mandala
 test_db_name: test_mandala
-repo_url:
-repo_version:
-repo_key_file:
+repo_url: git@github.com:zhiva-mrezha/mandala-sinergia.git
+repo_version: master
+repo_key_file: '{{config}}/id_rsa_horodeya_repo'
 db_user: '{{ vault_db_user }}'
 db_password: '{{ vault_db_password }}'
 test_db_url: 'postgresql://{{db_user}}:{{db_password}}@localhost/{{test_db_name}}'
 db_url: 'postgresql://{{db_user}}:{{db_password}}@localhost/{{db_name}}'
 config: /opt/mandala-config/
 secret_key: '{{vault_secret_key}}'
-oidc_client_id = '{{ vault_oidc_client_id }}'
-oidc_client_secret = '{{ vault_oidc_client_secret }}
+oidc_client_id: '{{ vault_oidc_client_id }}'
+oidc_client_secret: '{{ vault_oidc_client_secret }}'
