@@ -42,7 +42,14 @@ ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', '.mandalasinergia.eu']
 
 INSTALLED_APPS = [
     'app',
+
+    'mozilla_django_oidc',
     'bootstrap4',
+    'rules',
+    'photologue',
+
+    'django.contrib.sites',  # на Photologue му трябва
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -138,6 +145,7 @@ OIDC_RP_CLIENT_SECRET = os.getenv('OIDC_RP_CLIENT_SECRET')
 OIDC_OP_AUTHORIZATION_ENDPOINT = 'https://az.otselo.eu/auth/realms/zhiva-mrezha/protocol/openid-connect/auth'
 OIDC_OP_TOKEN_ENDPOINT = 'https://az.otselo.eu/auth/realms/zhiva-mrezha/protocol/openid-connect/token'
 OIDC_OP_USER_ENDPOINT = 'https://az.otselo.eu/auth/realms/zhiva-mrezha/protocol/openid-connect/userinfo'
+LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 OIDC_RP_SIGN_ALGO = 'RS256'
 OIDC_OP_JWKS_ENDPOINT = 'https://az.otselo.eu/auth/realms/zhiva-mrezha/protocol/openid-connect/certs'
@@ -147,6 +155,10 @@ OIDC_USER_ACCOUNT = 'https://az.otselo.eu/auth/realms/zhiva-mrezha/account'
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
 LANGUAGE_CODE = 'bg-bg'
+
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+]
 
 LANGUAGES = (
     ('en', 'English'),
@@ -183,3 +195,9 @@ BOOTSTRAP4 = {
     'jquery_slim_url': '/static/js/jquery-3.4.1.min.js',
     'popper_url': '/static/js/popper.min.js',
 }
+
+def PHOTOLOGUE_PATH(instance, filename):
+    fn = unicodedata.normalize('NFKD', force_text(filename)).encode('ascii', 'ignore').decode('ascii')
+    return os.path.join(instance.first_directory, instance.second_directory, fn)
+
+SITE_ID = 1
