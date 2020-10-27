@@ -4,14 +4,14 @@
 #
 #    pip-compile requirements.in
 #
-ansible-lint==4.1.0
-ansible==2.9.2
-bumpversion==0.5.3
+ansible-lint==4.1.0       # via -r requirements.in
+ansible==2.9.2            # via -r requirements.in, ansible-lint
+bumpversion==0.5.3        # via -r requirements.in
 certifi==2019.11.28       # via requests
 cffi==1.13.2              # via cryptography
 chardet==3.0.4            # via requests
-cryptography==2.8         # via ansible
-docker==4.1.0
+cryptography==3.2         # via ansible
+docker==4.1.0             # via -r requirements.in
 filelock==3.0.12          # via tox
 idna==2.8                 # via requests
 jinja2==2.10.3            # via ansible
@@ -26,7 +26,7 @@ requests==2.22.0          # via docker
 ruamel.yaml==0.16.5       # via ansible-lint
 six==1.13.0               # via ansible-lint, cryptography, docker, packaging, tox, websocket-client
 toml==0.10.0              # via tox
-tox==3.14.1
+tox==3.14.1               # via -r requirements.in
 urllib3==1.25.7           # via requests
 virtualenv==16.7.8        # via tox
 websocket-client==0.56.0  # via docker
