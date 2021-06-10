@@ -1,4 +1,4 @@
-Django==2.2.10
+Django==2.2.24
 psycopg2-binary==2.8.4
 django-bootstrap4==1.1.1
 mozilla-django-oidc==1.2.3
